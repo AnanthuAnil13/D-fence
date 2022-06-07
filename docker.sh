@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#ran=$RANDOM
-
-#ran2=$((10000+$RANDOM%15000))
-ran2=$((46337))
+port=$((46337))
 url=$1
+ip=$2
 
-name="firefox-$ran2"
-echo $ran2
+mysql  --defaults-extra-file=./config.cnf urldb -e 'INSERT INTO Link_Table (link, ip, port) VALUES ("'$url'", "'$ip'", '$port')'
 
-sudo docker run -d --name=$name -p $ran2:5800 --shm-size 2g -e "FF_PREF_HTTP_PROXY=startup.homepage_welcome_url=\"$url\"" jlesage/firefox
+name="firefox-$port"
+#echo $port
+
+sudo docker run -d --name=$name -p $port:5800 --shm-size 2g -e "FF_PREF_HTTP_PROXY=startup.homepage_welcome_url=\"$url\"" jlesage/firefox
