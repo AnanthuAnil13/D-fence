@@ -108,7 +108,6 @@ COPY --from=0 /tmp/membarrier_check /usr/bin/
 
 # Set environment variables.
 ENV APP_NAME="Firefox"
-ENV SECURE_CONNECTION=1
 
 # Define mountable directories.
 VOLUME ["/config"]
