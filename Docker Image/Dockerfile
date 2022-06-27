@@ -14,10 +14,6 @@ ARG DOCKER_IMAGE_VERSION=unknown
 
 # Define software versions.
 ARG FIREFOX_VERSION=94.0-r0
-ARG YAD_VERSION=7.3
-
-# Define software download URLs.
-ARG YAD_URL=https://github.com/v1cont/yad/releases/download/v${YAD_VERSION}/yad-${YAD_VERSION}.tar.xz
 
 # Define working directory.
 WORKDIR /tmp
@@ -28,42 +24,6 @@ RUN \
 #            --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
 #            --upgrade firefox=${FIREFOX_VERSION}
      add-pkg firefox=${FIREFOX_VERSION}
-
-# Install YAD.
-# NOTE: YAD is compiled manually because the version on the Alpine repository
-#       pulls too much dependencies.
-RUN \
-    # Install packages needed by the build.
-    add-pkg --virtual build-dependencies \
-        build-base \
-        curl \
-        intltool \
-        gtk+3.0-dev \
-        && \
-    # Set same default compilation flags as abuild.
-    export CFLAGS="-Os -fomit-frame-pointer" && \
-    export CXXFLAGS="$CFLAGS" && \
-    export CPPFLAGS="$CFLAGS" && \
-    export LDFLAGS="-Wl,--as-needed" && \
-    # Download.
-    mkdir yad && \
-    echo "Downloading YAD package..." && \
-    curl -# -L ${YAD_URL} | tar xJ --strip 1  -C yad && \
-    # Compile.
-    cd yad && \
-    ./configure \
-        --prefix=/usr \
-        --enable-standalone \
-        --disable-icon-browser \
-        --disable-html \
-        --disable-pfd \
-        && \
-    make && make install && \
-    strip /usr/bin/yad && \
-    cd .. && \
-    # Cleanup.
-    del-pkg build-dependencies && \
-    rm -rf /tmp/* /tmp/.[!.]*
 
 # Install extra packages.
 RUN \
