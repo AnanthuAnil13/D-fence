@@ -115,7 +115,14 @@ RUN \
     sed-patch 's|LOG_FILES=|LOG_FILES=/config/log/firefox/error.log|' /etc/logmonitor/logmonitor.conf && \
     sed-patch 's|STATUS_FILES=|STATUS_FILES=/tmp/.firefox_shm_check,/tmp/.firefox_membarrier_check|' /etc/logmonitor/logmonitor.conf
 
-
+# Adjust the openbox config.
+RUN \
+    # Maximize only the main window.
+    sed-patch 's/<application type="normal">/<application type="normal" title="Mozilla Firefox">/' \
+        /etc/xdg/openbox/rc.xml && \
+    # Make sure the main window is always in the background.
+    sed-patch '/<application type="normal" title="Mozilla Firefox">/a \    <layer>below</layer>' \
+        /etc/xdg/openbox/rc.xml
 
 # Generate and install favicons.
 RUN \
