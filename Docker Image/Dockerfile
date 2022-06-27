@@ -109,7 +109,7 @@ RUN \
 
 # Generate and install favicons.
 RUN \
-    APP_ICON_URL=https://github.com/AnanthuAnil13/D-fence/blob/main/images/logo128.png && \
+    APP_ICON_URL=https://raw.githubusercontent.com/ananthuanil13/d-fence/master/images/logo128.png && \
     install_app_icon.sh "$APP_ICON_URL"
 
 # Add files.
