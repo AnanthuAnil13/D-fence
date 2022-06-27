@@ -17,11 +17,13 @@ ARG FIREFOX_VERSION=94.0-r0
 ARG YAD_VERSION=7.3
 ARG JSONLZ4_VERSION=c4305b8
 ARG LZ4_VERSION=1.8.1.2
+#ARG PROFILE_CLEANER_VERSION=2.36
 
 # Define software download URLs.
 ARG YAD_URL=https://github.com/v1cont/yad/releases/download/v${YAD_VERSION}/yad-${YAD_VERSION}.tar.xz
 ARG JSONLZ4_URL=https://github.com/avih/dejsonlz4/archive/${JSONLZ4_VERSION}.tar.gz
 ARG LZ4_URL=https://github.com/lz4/lz4/archive/v${LZ4_VERSION}.tar.gz
+#ARG PROFILE_CLEANER_URL=https://github.com/graysky2/profile-cleaner/raw/v${PROFILE_CLEANER_VERSION}/common/profile-cleaner.in
 
 # Define working directory.
 WORKDIR /tmp
@@ -110,6 +112,24 @@ RUN \
     echo 'pref("browser.download.dir", "/config/downloads");' >> "$CFG_FILE" && \
     echo 'pref("browser.download.folderList", 2);' >> "$CFG_FILE"
 
+# Install profile-cleaner.
+#RUN \
+#    add-pkg --virtual build-dependencies curl && \
+#    curl -# -L -o /usr/bin/profile-cleaner {$PROFILE_CLEANER_URL} && \
+#    sed-patch 's/@VERSION@/'${PROFILE_CLEANER_VERSION}'/' /usr/bin/profile-cleaner && \
+#    chmod +x /usr/bin/profile-cleaner && \
+#    add-pkg \
+#        bash \
+#        file \
+#        coreutils \
+#        bc \
+#        parallel \
+#        sqlite \
+#        && \
+#    # Cleanup.
+#    del-pkg build-dependencies && \
+#    rm -rf /tmp/* /tmp/.[!.]*
+
 # Enable log monitoring.
 RUN \
     sed-patch 's|LOG_FILES=|LOG_FILES=/config/log/firefox/error.log|' /etc/logmonitor/logmonitor.conf && \
@@ -135,7 +155,6 @@ COPY --from=0 /tmp/membarrier_check /usr/bin/
 
 # Set environment variables.
 ENV APP_NAME="Firefox"
-ENV SECURE_CONNECTION=1
 
 # Define mountable directories.
 VOLUME ["/config"]
