@@ -14,13 +14,12 @@ ARG DOCKER_IMAGE_VERSION=unknown
 
 # Define software versions.
 ARG FIREFOX_VERSION=94.0-r0
-ARG YAD_VERSION=7.3
+# ARG YAD_VERSION=7.3
 ARG JSONLZ4_VERSION=c4305b8
 ARG LZ4_VERSION=1.8.1.2
 #ARG PROFILE_CLEANER_VERSION=2.36
 
 # Define software download URLs.
-ARG YAD_URL=https://github.com/v1cont/yad/releases/download/v${YAD_VERSION}/yad-${YAD_VERSION}.tar.xz
 ARG JSONLZ4_URL=https://github.com/avih/dejsonlz4/archive/${JSONLZ4_VERSION}.tar.gz
 ARG LZ4_URL=https://github.com/lz4/lz4/archive/v${LZ4_VERSION}.tar.gz
 #ARG PROFILE_CLEANER_URL=https://github.com/graysky2/profile-cleaner/raw/v${PROFILE_CLEANER_VERSION}/common/profile-cleaner.in
@@ -57,42 +56,6 @@ RUN \
 #            --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
 #            --upgrade firefox=${FIREFOX_VERSION}
      add-pkg firefox=${FIREFOX_VERSION}
-
-# Install YAD.
-# NOTE: YAD is compiled manually because the version on the Alpine repository
-#       pulls too much dependencies.
-RUN \
-    # Install packages needed by the build.
-    add-pkg --virtual build-dependencies \
-        build-base \
-        curl \
-        intltool \
-        gtk+3.0-dev \
-        && \
-    # Set same default compilation flags as abuild.
-    export CFLAGS="-Os -fomit-frame-pointer" && \
-    export CXXFLAGS="$CFLAGS" && \
-    export CPPFLAGS="$CFLAGS" && \
-    export LDFLAGS="-Wl,--as-needed" && \
-    # Download.
-    mkdir yad && \
-    echo "Downloading YAD package..." && \
-    curl -# -L ${YAD_URL} | tar xJ --strip 1  -C yad && \
-    # Compile.
-    cd yad && \
-    ./configure \
-        --prefix=/usr \
-        --enable-standalone \
-        --disable-icon-browser \
-        --disable-html \
-        --disable-pfd \
-        && \
-    make && make install && \
-    strip /usr/bin/yad && \
-    cd .. && \
-    # Cleanup.
-    del-pkg build-dependencies && \
-    rm -rf /tmp/* /tmp/.[!.]*
 
 # Install extra packages.
 RUN \
@@ -146,7 +109,7 @@ RUN \
 
 # Generate and install favicons.
 RUN \
-    APP_ICON_URL=https://github.com/jlesage/docker-templates/raw/master/jlesage/images/firefox-icon.png && \
+    APP_ICON_URL=https://github.com/AnanthuAnil13/D-fence/blob/main/images/logo128.png && \
     install_app_icon.sh "$APP_ICON_URL"
 
 # Add files.
@@ -162,7 +125,6 @@ VOLUME ["/config"]
 # Metadata.
 LABEL \
       org.label-schema.name="firefox" \
-      org.label-schema.description="Docker container for Firefox" \
-      org.label-schema.version="$DOCKER_IMAGE_VERSION" \
-      org.label-schema.vcs-url="https://github.com/jlesage/docker-firefox" \
-      org.label-schema.schema-version="1.0"
+      org.label-schema.description="Open Suspicious Link in Sandbox in your Browser" \
+      org.label-schema.vcs-url="https://github.com/AnanthuAnil13/" \
+      org.label-schema.schema-version="1.0.0"
